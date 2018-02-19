@@ -15,6 +15,10 @@ const store = createStore(combineReducers({reducer}), {});
 console.log(store);
 
 class Wrapper extends React.Component {
+  componentDidMount() {
+    store.subscribe(() => this.forceUpdate() );
+  }
+
   render() {
     return (
       <div>
