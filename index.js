@@ -1,28 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider, connect} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 
-const reducer = function(state = 0, action) {
-  console.log(action);
+const incrementer = function(state = 0, action) {
   if (action.type == 'increment') {
     state += 1;
   }
   return state;
 };
 
-const store = createStore(combineReducers({reducer}), {});
-
-console.log(store);
+const store = createStore(combineReducers({incrementer}), {});
 
 class Wrapper extends React.Component {
-  componentDidMount() {
-    store.subscribe(() => this.forceUpdate() );
-  }
-
   render() {
     return (
       <div>
-        <h1>{store.getState().reducer}</h1>
+        <h1>{this.props.number}</h1>
         <button onClick={() => store.dispatch({type: 'increment'})}>
           increment
         </button>
@@ -31,4 +25,16 @@ class Wrapper extends React.Component {
   }
 }
 
-ReactDOM.render(<Wrapper />, document.getElementById('foo'));
+const mapStateToProps = function(state) {
+  return {
+    number: state.incrementer
+  };
+};
+const WrapperWrapper = connect(mapStateToProps)(Wrapper);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <WrapperWrapper />
+  </Provider>,
+  document.getElementById('foo'),
+);
